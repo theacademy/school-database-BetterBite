@@ -79,14 +79,13 @@ public class SchoolDaoImpl implements SchoolDao {
 
         // from the courses table, join the course_student table into it by rows where the ids match, group it up by course code, desc, and id, then select from that the course code, course desc, and the number of students for that course from this new table and call it numStudents
         // final table to select from: courseCode, courseDesc, and a kinda array of student ids for each of those rows where the course id and course code matched from the originals
-        // edit 1: from the courses table, join the two where the ids match, but only for CS courses
-        // edit 2: only join rows that match (INNER JOIN), don't join course_student to course (LEFT JOIN)
+        // edit 1: turns out its not supposed to be the eng course so from the courses table, join the two where the ids match, but only for CS courses
+        // edit 2: turns out its not supposed to be courses with 0 students so only join rows that match (INNER JOIN), don't join course_student to course (LEFT JOIN)
         String sql = "SELECT courseCode, courseDesc, COUNT(student_id) "
                 + "AS numStudents "
                 + "FROM course "
                 + "INNER JOIN course_student "
                 + "ON cid = course_id "
-                + "WHERE courseCode LIKE 'CS%' "
                 + "GROUP BY courseCode, courseDesc, cid;";
 
         // YOUR CODE ENDS HERE
