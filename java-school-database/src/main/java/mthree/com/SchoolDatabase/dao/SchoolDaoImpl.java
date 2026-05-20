@@ -36,7 +36,7 @@ public class SchoolDaoImpl implements SchoolDao {
         // sorted by last name.
         // YOUR CODE STARTS HERE
 
-        String sql = "";
+        String sql = "SELECT lName, fName FROM student ORDER BY lName;";
 
         // YOUR CODE ENDS HERE
 
@@ -49,7 +49,8 @@ public class SchoolDaoImpl implements SchoolDao {
         // for all courses in the Computer Science department.
         // YOUR CODE STARTS HERE
 
-         String sql = "";
+         String sql = "SELECT courseCode, courseDesc FROM course "
+                 + "WHERE courseCode LIKE 'CS%';";
 
         // YOUR CODE ENDS HERE
         return jdbcTemplate.query(sql, new CourseMapper());
@@ -61,7 +62,9 @@ public class SchoolDaoImpl implements SchoolDao {
         //  Name the aggregate field `teacherCount`.
         // YOUR CODE STARTS HERE
 
-        String sql = "";
+        String sql = "SELECT dept, COUNT(*) "
+                + "AS teacherCount "
+                + "FROM teacher GROUP BY dept;";
 
         // YOUR CODE ENDS HERE
         return jdbcTemplate.query(sql, new TeacherCountMapper());
@@ -74,7 +77,17 @@ public class SchoolDaoImpl implements SchoolDao {
         // Name the aggregate field `numStudents`.
         // YOUR CODE STARTS HERE
 
-        String sql = "";
+        // from the courses table, join the course_student table into it by rows where the ids match, group it up by course code, desc, and id, then select from that the course code, course desc, and the number of students for that course from this new table and call it numStudents
+        // final table to select from: courseCode, courseDesc, and a kinda array of student ids for each of those rows where the course id and course code matched from the originals
+        // edit 1: from the courses table, join the two where the ids match, but only for CS courses
+        // edit 2: only join rows that match (INNER JOIN), don't join course_student to course (LEFT JOIN)
+        String sql = "SELECT courseCode, courseDesc, COUNT(student_id) "
+                + "AS numStudents "
+                + "FROM course "
+                + "INNER JOIN course_student "
+                + "ON cid = course_id "
+                + "WHERE courseCode LIKE 'CS%' "
+                + "GROUP BY courseCode, courseDesc, cid;";
 
         // YOUR CODE ENDS HERE
         return jdbcTemplate.query(sql, new StudentCountMapper());
@@ -88,7 +101,8 @@ public class SchoolDaoImpl implements SchoolDao {
         // Need to add in the sid for Robert Dylan.  Use sid: 123
         // YOUR CODE STARTS HERE
 
-        String sql = "";
+        String sql = "INSERT INTO student "
+                + "VALUES (123, 'Robert',  'Dylan');";
 
         // YOUR CODE ENDS HERE
          System.out.println(jdbcTemplate.update(sql));
@@ -101,7 +115,8 @@ public class SchoolDaoImpl implements SchoolDao {
         // You will need to include a sid in your query.  Use 123
         // YOUR CODE STARTS HERE
 
-        String sql = "";
+        String sql = "INSERT INTO course_student "
+                + "VALUES (123, 1)";
 
         // YOUR CODE ENDS HERE
         jdbcTemplate.update(sql);
@@ -112,7 +127,9 @@ public class SchoolDaoImpl implements SchoolDao {
         // Write a query to change the course description for course CS305 to "Advanced Python with Flask".
         // YOUR CODE STARTS HERE
 
-        String sql = "";
+        String sql = "UPDATE course SET "
+                + "courseDesc = 'Advanced Python with Flask' "
+                + "WHERE cid = 4;";
 
         // YOUR CODE ENDS HERE
         jdbcTemplate.update(sql);
@@ -123,7 +140,8 @@ public class SchoolDaoImpl implements SchoolDao {
         // Write a query to remove David Mitchell as a teacher.
         // YOUR CODE STARTS HERE
 
-        String sql = "";
+        String sql = "DELETE FROM teacher "
+                + "WHERE tid = 9;";
 
         // YOUR CODE ENDS HERE
         jdbcTemplate.update(sql);
